@@ -8,7 +8,7 @@ interface UsePokemonReturn {
   status: PokemonStatus;
   error: string | null;
   errorCode: PokeApiErrorCode | null;
-  searchPokemon: (name: string) => Promise<void>;
+  searchPokemon: (name: string) => Promise<IPokemon | null>;
   cancelPokemonSearch: () => void;
 }
 
@@ -41,15 +41,17 @@ export function usePokemon(): UsePokemonReturn {
 
       // Ignorar respuestas de peticiones anteriores.
       if (controllerRef.current !== controller) {
-        return;
+        return null;
       }
 
       setPokemon(data);
       setStatus("success");
+
+      return data;
     } catch (error) {
       // Las cancelaciones no representan errores para el usuario.
       if (controller.signal.aborted || controllerRef.current !== controller) {
-        return;
+        return null;
       }
 
       setPokemon(null);
@@ -59,6 +61,8 @@ export function usePokemon(): UsePokemonReturn {
       setErrorCode(error instanceof PokeApiError ? error.code : null);
 
       setStatus("error");
+
+      return null;
     } finally {
       if (controllerRef.current === controller) {
         controllerRef.current = null;

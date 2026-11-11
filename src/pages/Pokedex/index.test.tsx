@@ -1,12 +1,15 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Pokedex from ".";
+import { HISTORY_STORAGE_KEY } from "../../hooks/useHistory";
 import { clearPokemonCache } from "../../services/pokeapi";
 import { jsonResponse, mew, pikachu } from "../../test/fixtures";
 
 const fetchMock = vi.fn<typeof fetch>();
 
 beforeEach(() => {
+  window.localStorage.clear();
+  window.sessionStorage.clear();
   clearPokemonCache();
   fetchMock.mockReset();
   fetchMock.mockImplementation(async () => jsonResponse(mew));
@@ -17,9 +20,13 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
+function getSearchInput() {
+  return screen.getByRole("textbox", { name: "Nombre o número del Pokémon" });
+}
+
 async function search(term: string) {
   const user = userEvent.setup();
-  const input = screen.getByPlaceholderText("Busca tu pokemon");
+  const input = getSearchInput();
 
   await user.clear(input);
   await user.type(input, `${term}{Enter}`);
@@ -30,7 +37,9 @@ describe("Pokedex", () => {
     render(<Pokedex />);
 
     expect(await screen.findByRole("heading", { name: "mew" })).toBeInTheDocument();
-    expect(screen.getByText("hp:")).toBeInTheDocument();
+    expect(screen.getByText("#151")).toBeInTheDocument();
+    expect(screen.getByTitle("Puntos de salud")).toHaveTextContent("PS");
+    expect(screen.getByTitle("Ataque")).toHaveTextContent("ATQ");
     expect(screen.getAllByText("100")).toHaveLength(2);
   });
 
@@ -153,10 +162,96 @@ describe("Pokedex", () => {
     await screen.findByRole("heading", { name: "mew" });
 
     const user = userEvent.setup();
-    const input = screen.getByPlaceholderText("Busca tu pokemon");
+    const input = getSearchInput();
     await user.clear(input);
     await user.type(input, "   ");
 
-    expect(screen.getByRole("button", { name: "Buscar Pokémon" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Buscar" })).toBeDisabled();
+  });
+
+  it("announces errors through an alert region", async () => {
+    render(<Pokedex />);
+    await screen.findByRole("heading", { name: "mew" });
+
+    fetchMock.mockImplementation(async () => new Response(null, { status: 404 }));
+    await search("zzzznoexiste");
+
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent("¡Pokémon no encontrado!");
+  });
+
+  it("adds searched pokemon to the recent list, but not the initial one", async () => {
+    render(<Pokedex />);
+    await screen.findByRole("heading", { name: "mew" });
+
+    expect(screen.getByText("Tus últimas búsquedas aparecerán aquí.")).toBeInTheDocument();
+
+    fetchMock.mockImplementation(async () => jsonResponse(pikachu));
+    await search("pikachu");
+
+    expect(await screen.findByRole("button", { name: "#025 pikachu" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "#151 mew" })).not.toBeInTheDocument();
+  });
+
+  it("searches again when a recent entry is selected", async () => {
+    render(<Pokedex />);
+    await screen.findByRole("heading", { name: "mew" });
+
+    fetchMock.mockImplementation(async () => jsonResponse(pikachu));
+    await search("pikachu");
+    await screen.findByRole("heading", { name: "pikachu" });
+    await search("mew");
+    await screen.findByRole("heading", { name: "mew" });
+
+    await userEvent.setup().click(screen.getByRole("button", { name: "#025 pikachu" }));
+
+    expect(await screen.findByRole("heading", { name: "pikachu" })).toBeInTheDocument();
+    expect(getSearchInput()).toHaveValue("pikachu");
+  });
+
+  it("toggles the current pokemon as favorite and persists it", async () => {
+    const user = userEvent.setup();
+    render(<Pokedex />);
+    await screen.findByRole("heading", { name: "mew" });
+
+    const favoriteKey = screen.getByRole("button", { name: "Favorito" });
+    expect(favoriteKey).toHaveAttribute("aria-pressed", "false");
+
+    await user.click(favoriteKey);
+
+    expect(favoriteKey).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: "#151 mew" })).toBeInTheDocument();
+    expect(JSON.parse(window.localStorage.getItem(HISTORY_STORAGE_KEY) ?? "{}")).toMatchObject({
+      favorites: [{ id: 151, name: "mew" }],
+    });
+
+    await user.click(favoriteKey);
+
+    expect(favoriteKey).toHaveAttribute("aria-pressed", "false");
+    expect(screen.queryByRole("button", { name: "#151 mew" })).not.toBeInTheDocument();
+  });
+
+  it("restores favorites and recents saved in a previous visit", async () => {
+    window.localStorage.setItem(
+      HISTORY_STORAGE_KEY,
+      JSON.stringify({
+        favorites: [{ id: 25, name: "pikachu" }],
+        recents: [{ id: 1, name: "bulbasaur" }],
+      }),
+    );
+
+    render(<Pokedex />);
+
+    expect(await screen.findByRole("button", { name: "#025 pikachu" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "#001 bulbasaur" })).toBeInTheDocument();
+  });
+
+  it("ignores corrupted saved history", async () => {
+    window.localStorage.setItem(HISTORY_STORAGE_KEY, "{not json");
+
+    render(<Pokedex />);
+
+    expect(await screen.findByRole("heading", { name: "mew" })).toBeInTheDocument();
+    expect(screen.getByText("Tus últimas búsquedas aparecerán aquí.")).toBeInTheDocument();
   });
 });
