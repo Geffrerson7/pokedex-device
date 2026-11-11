@@ -6,6 +6,11 @@ export const mew: IPokemon = {
   sprites: {
     back_default: "https://example.test/mew-back.png",
     front_default: "https://example.test/mew-front.png",
+    other: {
+      "official-artwork": {
+        front_default: "https://example.test/mew-artwork.png",
+      },
+    },
   },
   stats: [
     { base_stat: 100, stat: { name: "hp" } },

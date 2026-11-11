@@ -67,9 +67,9 @@ The same checks run on every pull request through GitHub Actions (`.github/workf
 
 ```
 src/
-├── components/   UI components (PokedexScreen, PokemonForm, Stat, ErrorBoundary)
+├── components/   UI components (PokedexScreen, PokemonImage, PokemonForm, Stat, ErrorBoundary)
 ├── hooks/        usePokemon: search state and request cancellation
-├── services/     PokeAPI client and typed errors
+├── services/     PokeAPI client, typed errors and search cache
 ├── interfaces/   Domain types
 ├── pages/        Pokedex page
 └── test/         Test setup and fixtures

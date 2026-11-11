@@ -1,7 +1,6 @@
 import type { IPokemon, PokemonStatus } from "../../interfaces/pokemon";
+import PokemonImage from "../PokemonImage";
 import Stat from "../Stat";
-import ErrorPokemon from "../../img/error.gif";
-import LoadingPokemon from "../../img/carga.gif";
 import type { PokeApiErrorCode } from "../../services/pokeapi";
 
 interface Props {
@@ -41,7 +40,10 @@ export default function PokedexScreen({ pokemon, status, errorMessage, errorCode
     return (
       <div className="pokedex-screen">
         <div className="pokemon-error">
-          <img src={ErrorPokemon} alt="Error buscando el Pokémon" className="pokemon-error-img" />
+          <svg className="pokemon-error-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 2 1 21h22L12 2Z" />
+            <path className="pokemon-error-mark" d="M11 9h2v6h-2zM11 17h2v2h-2z" />
+          </svg>
 
           <h3>{title}</h3>
 
@@ -56,11 +58,11 @@ export default function PokedexScreen({ pokemon, status, errorMessage, errorCode
   if (status === "idle" || status === "loading" || !pokemon) {
     return (
       <div className="pokedex-screen" aria-live="polite">
-        <img
-          src={LoadingPokemon}
-          alt={status === "loading" ? "Buscando Pokémon" : "Esperando una búsqueda"}
-          className="pokedex-no-screen"
-        />
+        {status === "loading" ? (
+          <div className="pokedex-loader" role="status" aria-label="Buscando Pokémon" />
+        ) : (
+          <p className="pokedex-message">Esperando una búsqueda</p>
+        )}
       </div>
     );
   }
@@ -70,11 +72,7 @@ export default function PokedexScreen({ pokemon, status, errorMessage, errorCode
       <div className="pokemon-info">
         <h2 className="pokemon-name">{pokemon.name}</h2>
 
-        <img
-          className="pokemon-img"
-          src={`https://db.pokemongohub.net/images/pokemon/${pokemon.id}.webp`}
-          alt={pokemon.name}
-        />
+        <PokemonImage key={pokemon.id} pokemon={pokemon} />
 
         <ul className="pokemon-stats">
           {pokemon.stats.map((item) => (
