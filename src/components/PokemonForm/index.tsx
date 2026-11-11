@@ -1,16 +1,12 @@
-import { ChangeEvent, FormEvent } from "react";
+import type { ChangeEvent, SubmitEvent } from "react";
 
 interface Props {
   pokemon: string;
-  handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  handleSubmit: (event: SubmitEvent<HTMLFormElement>) => void;
   setPokemon: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export default function PokemonForm({
-  handleSubmit,
-  pokemon,
-  setPokemon,
-}: Props) {
+export default function PokemonForm({ handleSubmit, pokemon, setPokemon }: Props) {
   return (
     <form className="pokemon-form" onSubmit={handleSubmit}>
       <input

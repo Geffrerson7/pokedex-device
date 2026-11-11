@@ -1,11 +1,7 @@
-import { IPokemon, ItemStat } from "../interfaces/pokemon";
+import type { IPokemon, ItemStat } from "../interfaces/pokemon";
 
 export type PokeApiErrorCode =
-  | "INVALID_INPUT"
-  | "NOT_FOUND"
-  | "HTTP_ERROR"
-  | "NETWORK_ERROR"
-  | "INVALID_RESPONSE";
+  "INVALID_INPUT" | "NOT_FOUND" | "HTTP_ERROR" | "NETWORK_ERROR" | "INVALID_RESPONSE";
 
 export class PokeApiError extends Error {
   constructor(
@@ -54,36 +50,23 @@ function isPokemon(value: unknown): value is IPokemon {
     typeof pokemon.name === "string" &&
     Array.isArray(pokemon.stats) &&
     pokemon.stats.every(isItemStat) &&
-    (typeof spriteData.front_default === "string" ||
-      spriteData.front_default === null) &&
-    (typeof spriteData.back_default === "string" ||
-      spriteData.back_default === null)
+    (typeof spriteData.front_default === "string" || spriteData.front_default === null) &&
+    (typeof spriteData.back_default === "string" || spriteData.back_default === null)
   );
 }
 
-export async function getPokemon(
-  name: string,
-  signal?: AbortSignal,
-): Promise<IPokemon> {
+export async function getPokemon(name: string, signal?: AbortSignal): Promise<IPokemon> {
   const normalizedName = name.trim().toLowerCase();
 
   if (!normalizedName) {
-    throw new PokeApiError(
-      "Ingresa el nombre o número de un Pokémon.",
-      "INVALID_INPUT",
-    );
+    throw new PokeApiError("Ingresa el nombre o número de un Pokémon.", "INVALID_INPUT");
   }
 
   if (normalizedName.length > MAX_POKEMON_NAME_LENGTH) {
-    throw new PokeApiError(
-      "El nombre del Pokémon supera la longitud permitida.",
-      "INVALID_INPUT",
-    );
+    throw new PokeApiError("El nombre del Pokémon supera la longitud permitida.", "INVALID_INPUT");
   }
 
-  const url = `https://pokeapi.co/api/v2/pokemon/${encodeURIComponent(
-    normalizedName,
-  )}`;
+  const url = `https://pokeapi.co/api/v2/pokemon/${encodeURIComponent(normalizedName)}`;
 
   let response: Response;
 
@@ -101,10 +84,7 @@ export async function getPokemon(
   }
 
   if (response.status === 404) {
-    throw new PokeApiError(
-      "No se encontró ningún Pokémon con ese nombre o número.",
-      "NOT_FOUND",
-    );
+    throw new PokeApiError("No se encontró ningún Pokémon con ese nombre o número.", "NOT_FOUND");
   }
 
   if (!response.ok) {
@@ -119,10 +99,7 @@ export async function getPokemon(
   try {
     data = await response.json();
   } catch {
-    throw new PokeApiError(
-      "El servidor devolvió una respuesta inválida.",
-      "INVALID_RESPONSE",
-    );
+    throw new PokeApiError("El servidor devolvió una respuesta inválida.", "INVALID_RESPONSE");
   }
 
   if (!isPokemon(data)) {

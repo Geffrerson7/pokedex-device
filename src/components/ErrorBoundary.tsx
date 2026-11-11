@@ -1,4 +1,5 @@
-import { Component, ErrorInfo, ReactNode } from "react";
+import { Component } from "react";
+import type { ErrorInfo, ReactNode } from "react";
 
 interface Props {
   children: ReactNode;
@@ -35,9 +36,7 @@ export default class ErrorBoundary extends Component<Props, State> {
         >
           <h1>Algo salió mal</h1>
           <p>Ocurrió un error inesperado al mostrar la aplicación.</p>
-          <button onClick={() => window.location.reload()}>
-            Recargar aplicación
-          </button>
+          <button onClick={() => window.location.reload()}>Recargar aplicación</button>
         </div>
       );
     }

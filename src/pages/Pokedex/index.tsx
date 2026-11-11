@@ -1,24 +1,18 @@
-import { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import { useState, useEffect } from "react";
+import type { ChangeEvent, SubmitEvent } from "react";
 import { PokedexScreen, PokemonForm } from "../../components";
 import { usePokemon } from "../../hooks/usePokemon";
 
 export default function Pokedex() {
   const [name, setName] = useState<string>("151");
 
-  const {
-    pokemon,
-    status,
-    error,
-    errorCode,
-    searchPokemon,
-    cancelPokemonSearch,
-  } = usePokemon();
+  const { pokemon, status, error, errorCode, searchPokemon, cancelPokemonSearch } = usePokemon();
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     void searchPokemon(name);
   };
@@ -57,11 +51,7 @@ export default function Pokedex() {
             <div className="light is-orange is-large" />
           </div>
 
-          <PokemonForm
-            handleSubmit={handleSubmit}
-            pokemon={name}
-            setPokemon={handleInputChange}
-          />
+          <PokemonForm handleSubmit={handleSubmit} pokemon={name} setPokemon={handleInputChange} />
         </div>
       </div>
 
