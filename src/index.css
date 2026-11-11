@@ -260,9 +260,23 @@ ul {
 }
 .pokemon-img {
   width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
   transform: scale(1.2);
   align-self: center;
   grid-area: img;
+}
+.pokemon-img.is-missing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: none;
+  border: 2px dashed #b0b0b0;
+  border-radius: 10px;
+  box-sizing: border-box;
+  color: #b0b0b0;
+  font-size: 2rem;
+  font-weight: 700;
 }
 .pokemon-stats {
   grid-area: stats;
@@ -270,9 +284,33 @@ ul {
 .pokemon-stat {
   font-size: 0.9rem;
 }
-.pokedex-no-screen {
-  width: 100%;
-  height: 100%;
+.pokedex-loader {
+  width: 3rem;
+  height: 3rem;
+  margin: auto;
+  border: 5px solid #b0b0b0;
+  border-top-color: var(--red);
+  border-radius: 50%;
+  box-sizing: border-box;
+  animation: pokedex-spin 0.8s linear infinite;
+}
+
+@keyframes pokedex-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pokedex-loader {
+    animation-duration: 2.4s;
+  }
+}
+
+.pokedex-message {
+  margin: auto;
+  font-size: 0.9rem;
+  color: #666666;
 }
 .stat-name {
   text-transform: capitalize;
@@ -368,11 +406,19 @@ ul {
   overflow: hidden;
 }
 
-.pokemon-error-img {
-  width: 100%;
-  max-width: 130px;
-  max-height: 90px;
-  object-fit: contain;
+.pokemon-error-icon {
+  width: 3rem;
+  height: 3rem;
+  flex-shrink: 0;
+  fill: var(--yellow);
+  stroke: black;
+  stroke-width: 1;
+  stroke-linejoin: round;
+}
+
+.pokemon-error-mark {
+  fill: black;
+  stroke: none;
 }
 
 .pokemon-error h3 {

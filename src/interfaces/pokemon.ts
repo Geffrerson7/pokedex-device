@@ -4,6 +4,11 @@ export interface IPokemon {
   sprites: {
     back_default: string | null;
     front_default: string | null;
+    other?: {
+      "official-artwork"?: {
+        front_default?: string | null;
+      };
+    };
   };
   stats: ItemStat[];
 }

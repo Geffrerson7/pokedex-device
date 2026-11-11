@@ -14,6 +14,31 @@ export class PokeApiError extends Error {
 }
 
 const MAX_POKEMON_NAME_LENGTH = 50;
+const MAX_CACHED_POKEMON = 100;
+
+// Solo se guardan respuestas válidas, indexadas por nombre y por número.
+const pokemonCache = new Map<string, IPokemon>();
+
+function cachePokemon(key: string, pokemon: IPokemon): void {
+  for (const cacheKey of new Set([key, pokemon.name, String(pokemon.id)])) {
+    pokemonCache.delete(cacheKey);
+    pokemonCache.set(cacheKey, pokemon);
+  }
+
+  while (pokemonCache.size > MAX_CACHED_POKEMON) {
+    const oldestKey = pokemonCache.keys().next().value;
+
+    if (oldestKey === undefined) {
+      break;
+    }
+
+    pokemonCache.delete(oldestKey);
+  }
+}
+
+export function clearPokemonCache(): void {
+  pokemonCache.clear();
+}
 
 function isItemStat(value: unknown): value is ItemStat {
   if (typeof value !== "object" || value === null) {
@@ -66,6 +91,12 @@ export async function getPokemon(name: string, signal?: AbortSignal): Promise<IP
     throw new PokeApiError("El nombre del Pokémon supera la longitud permitida.", "INVALID_INPUT");
   }
 
+  const cachedPokemon = pokemonCache.get(normalizedName);
+
+  if (cachedPokemon) {
+    return cachedPokemon;
+  }
+
   const url = `https://pokeapi.co/api/v2/pokemon/${encodeURIComponent(normalizedName)}`;
 
   let response: Response;
@@ -108,6 +139,8 @@ export async function getPokemon(name: string, signal?: AbortSignal): Promise<IP
       "INVALID_RESPONSE",
     );
   }
+
+  cachePokemon(normalizedName, data);
 
   return data;
 }

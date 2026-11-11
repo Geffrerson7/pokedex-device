@@ -1,9 +1,10 @@
-import { getPokemon, PokeApiError } from "./pokeapi";
+import { clearPokemonCache, getPokemon, PokeApiError } from "./pokeapi";
 import { jsonResponse, pikachu } from "../test/fixtures";
 
 const fetchMock = vi.fn<typeof fetch>();
 
 beforeEach(() => {
+  clearPokemonCache();
   fetchMock.mockReset();
   vi.stubGlobal("fetch", fetchMock);
 });
@@ -96,6 +97,34 @@ describe("getPokemon", () => {
     const error = await getError(getPokemon("pikachu"));
 
     expect(error.code).toBe("INVALID_RESPONSE");
+  });
+
+  it("serves a repeated search from the cache", async () => {
+    fetchMock.mockImplementation(async () => jsonResponse(pikachu));
+
+    await getPokemon("pikachu");
+    const second = await getPokemon(" PIKACHU ");
+
+    expect(second).toEqual(pikachu);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("serves a search by number from the cache after a search by name", async () => {
+    fetchMock.mockImplementation(async () => jsonResponse(pikachu));
+
+    await getPokemon("pikachu");
+    await getPokemon("25");
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not cache failed searches", async () => {
+    fetchMock.mockImplementation(async () => new Response(null, { status: 404 }));
+
+    await getError(getPokemon("zzzznoexiste"));
+    await getError(getPokemon("zzzznoexiste"));
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
   it("rethrows the abort error instead of wrapping it", async () => {
