@@ -1,5 +1,5 @@
-import { PokedexView } from './pages'
+import { PokedexView } from "./pages";
 
-export default function App(){
-  return<PokedexView/>
+export default function App() {
+  return <PokedexView />;
 }

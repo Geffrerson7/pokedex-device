@@ -1,1 +1,1 @@
-export {default as PokedexView} from "./Pokedex"
+export { default as PokedexView } from "./Pokedex";

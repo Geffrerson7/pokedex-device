@@ -1,55 +1,72 @@
-import { useState, useEffect, ChangeEvent } from "react"
-import { PokedexScreen, PokemonForm } from "../../components"
+import { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import { PokedexScreen, PokemonForm } from "../../components";
+import { usePokemon } from "../../hooks/usePokemon";
 
 export default function Pokedex() {
-  const [pokemon, setPokemon] = useState<any>(null);
+  const [name, setName] = useState<string>("151");
 
-  const [name, setName] =useState<string>("151")
+  const {
+    pokemon,
+    status,
+    error,
+    errorCode,
+    searchPokemon,
+    cancelPokemonSearch,
+  } = usePokemon();
 
-  const fetchPokemon = async () => {
-    if (!name) return
-  
-    const response = await fetch(
-      `https://pokeapi.co/api/v2/pokemon/${name.toLocaleLowerCase()}`
-    );
-    const data = await response.json();
-    setPokemon(data);
-    
-    setName("")
-  }
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+  };
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
-  }
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    void searchPokemon(name);
+  };
 
   useEffect(() => {
-    fetchPokemon();
-  }, [])
+    void searchPokemon("151");
+
+    return () => {
+      cancelPokemonSearch();
+    };
+  }, [searchPokemon, cancelPokemonSearch]);
 
   return (
     <div className="pokedex">
       <div className="pokedex-left">
         <div className="pokedex-left-top">
-          <div className='light is-sky is-big' />
+          <div className="light is-sky is-big" />
           <div className="light is-red" />
           <div className="light is-yellow" />
           <div className="light is-green" />
         </div>
+
         <div className="pokedex-screen-container">
-          <PokedexScreen pokemon={pokemon} loading={false} error={false} />
+          <PokedexScreen
+            pokemon={pokemon}
+            status={status}
+            errorMessage={error}
+            errorCode={errorCode}
+          />
         </div>
+
         <div className="pokedex-left-bottom">
           <div className="pokedex-left-bottom-lights">
             <div className="light is-blue is-medium" />
             <div className="light is-green is-large" />
             <div className="light is-orange is-large" />
           </div>
-          <PokemonForm handleSubmit={fetchPokemon} pokemon={name} setPokemon={handleInputChange} />
+
+          <PokemonForm
+            handleSubmit={handleSubmit}
+            pokemon={name}
+            setPokemon={handleInputChange}
+          />
         </div>
       </div>
+
       <div className="pokedex-right-front" />
       <div className="pokedex-right-back" />
     </div>
-  )
-
+  );
 }
