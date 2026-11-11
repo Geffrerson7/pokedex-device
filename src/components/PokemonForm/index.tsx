@@ -1,15 +1,18 @@
-import { ChangeEvent, FormEvent } from "react"
-
+import { ChangeEvent, FormEvent } from "react";
 
 interface Props {
   pokemon: string;
-  handleSubmit: () => void;
-  setPokemon: (e: ChangeEvent<HTMLInputElement>) => void;
+  handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  setPokemon: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export default function PokemonForm({ handleSubmit, pokemon, setPokemon }: Props) {
+export default function PokemonForm({
+  handleSubmit,
+  pokemon,
+  setPokemon,
+}: Props) {
   return (
-    <div className="pokemon-form" >
+    <form className="pokemon-form" onSubmit={handleSubmit}>
       <input
         className="pokemon-input"
         type="text"
@@ -18,8 +21,16 @@ export default function PokemonForm({ handleSubmit, pokemon, setPokemon }: Props
         placeholder="Busca tu pokemon"
         onChange={setPokemon}
         autoComplete="off"
+        maxLength={50}
       />
-      <input onClick={handleSubmit} type="submit" className="pokemon-btn" value="" />
-    </div>
-  )
+
+      <input
+        type="submit"
+        className="pokemon-btn"
+        value=""
+        disabled={!pokemon.trim()}
+        aria-label="Buscar Pokémon"
+      />
+    </form>
+  );
 }
