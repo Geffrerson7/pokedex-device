@@ -1,8 +1,8 @@
-import { IPokemon, PokemonStatus } from "../../interfaces/pokemon";
+import type { IPokemon, PokemonStatus } from "../../interfaces/pokemon";
 import Stat from "../Stat";
 import ErrorPokemon from "../../img/error.gif";
 import LoadingPokemon from "../../img/carga.gif";
-import { PokeApiErrorCode } from "../../services/pokeapi";
+import type { PokeApiErrorCode } from "../../services/pokeapi";
 
 interface Props {
   pokemon: IPokemon | null;
@@ -34,23 +34,14 @@ function getErrorCopy(errorCode: PokeApiErrorCode | null) {
   }
 }
 
-export default function PokedexScreen({
-  pokemon,
-  status,
-  errorMessage,
-  errorCode,
-}: Props) {
+export default function PokedexScreen({ pokemon, status, errorMessage, errorCode }: Props) {
   if (status === "error") {
     const { title, hint } = getErrorCopy(errorCode);
 
     return (
       <div className="pokedex-screen">
         <div className="pokemon-error">
-          <img
-            src={ErrorPokemon}
-            alt="Error buscando el Pokémon"
-            className="pokemon-error-img"
-          />
+          <img src={ErrorPokemon} alt="Error buscando el Pokémon" className="pokemon-error-img" />
 
           <h3>{title}</h3>
 
@@ -67,9 +58,7 @@ export default function PokedexScreen({
       <div className="pokedex-screen" aria-live="polite">
         <img
           src={LoadingPokemon}
-          alt={
-            status === "loading" ? "Buscando Pokémon" : "Esperando una búsqueda"
-          }
+          alt={status === "loading" ? "Buscando Pokémon" : "Esperando una búsqueda"}
           className="pokedex-no-screen"
         />
       </div>

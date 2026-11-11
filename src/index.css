@@ -7,7 +7,7 @@
   --green: #2ff901;
   --yellow: #ffcc02;
   --sky: #01fbfb;
-  --orange: #ffcc02;
+  --orange: #ff9a02;
   --blue: #519afb;
   font-size: 16px;
 }
@@ -34,26 +34,15 @@ ul {
   list-style: none;
 }
 
-.App {
-  display: flex;
-  align-items: center;
-  height: 100vh;
-  overflow: hidden;
-  margin: 0;
-  font-family: system-ui;
-}
-
 /*------------------*/
 /* Pokedex */
 /*------------------*/
 .pokedex {
   perspective: 1000px;
   position: relative;
-  overflow: hidden;
   height: 31rem;
   width: 23rem;
   margin: 0 auto;
-  overflow: initial;
   box-shadow: 0 2px 12px -2px rgba(255, 0, 0, 0.4);
 }
 
@@ -163,22 +152,6 @@ ul {
   height: 20px;
   background: gray;
   border-radius: 50%;
-}
-
-.light.is-animated {
-  animation: 0.3s light linear infinite;
-}
-
-@keyframes light {
-  0% {
-    background-color: white;
-  }
-  50% {
-    background-color: var(--sky);
-  }
-  100% {
-    background-color: white;
-  }
 }
 
 .light.is-big {
@@ -318,8 +291,7 @@ ul {
 .pokemon-input {
   font-family: system-ui;
   padding: 10px;
-  background-color: var(--orange);
-  border: none;
+  background-color: var(--yellow);
   border: 1px solid black;
   border-radius: 10px;
   outline: 0;
@@ -339,17 +311,10 @@ ul {
 }
 
 .pokemon-btn {
-  border-radius: 50%;
-}
-
-.pokemon-btn {
   width: 40px;
   height: 40px;
   position: relative;
-  background: radial-gradient(
-    hsl(0, 100%, 70%),
-    hsl(0, 97%, 25%)
-  ); /* Standard syntax */
+  background: radial-gradient(hsl(0, 100%, 70%), hsl(0, 97%, 25%)); /* Standard syntax */
   text-shadow: 0 -1px 0 #c30707;
   color: white;
   border: solid 1px hsl(0, 100%, 20%);
@@ -371,17 +336,11 @@ ul {
 }
 
 .pokemon-btn:hover {
-  background: radial-gradient(
-    hsl(0, 100%, 70%),
-    hsl(0, 97%, 35%)
-  ); /* Standard syntax */
+  background: radial-gradient(hsl(0, 100%, 70%), hsl(0, 97%, 35%)); /* Standard syntax */
 }
 
 .pokemon-btn:active {
-  background: radial-gradient(
-    hsl(0, 100%, 80%),
-    hsl(0, 100%, 45%)
-  ); /* Standard syntax */
+  background: radial-gradient(hsl(0, 100%, 80%), hsl(0, 100%, 45%)); /* Standard syntax */
 
   top: 2px;
 

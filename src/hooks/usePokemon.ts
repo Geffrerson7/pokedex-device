@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from "react";
-import { getPokemon, PokeApiError, PokeApiErrorCode } from "../services/pokeapi";
-import { IPokemon, PokemonStatus } from "../interfaces/pokemon";
+import { getPokemon, PokeApiError } from "../services/pokeapi";
+import type { PokeApiErrorCode } from "../services/pokeapi";
+import type { IPokemon, PokemonStatus } from "../interfaces/pokemon";
 
 interface UsePokemonReturn {
   pokemon: IPokemon | null;
@@ -53,9 +54,7 @@ export function usePokemon(): UsePokemonReturn {
 
       setPokemon(null);
 
-      setError(
-        error instanceof Error ? error.message : "Ocurrió un error inesperado.",
-      );
+      setError(error instanceof Error ? error.message : "Ocurrió un error inesperado.");
 
       setErrorCode(error instanceof PokeApiError ? error.code : null);
 
