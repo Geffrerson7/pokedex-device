@@ -27,16 +27,12 @@ export default class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div
-          role="alert"
-          style={{
-            padding: "2rem",
-            textAlign: "center",
-          }}
-        >
+        <div className="app-error" role="alert">
           <h1>Algo salió mal</h1>
           <p>Ocurrió un error inesperado al mostrar la aplicación.</p>
-          <button onClick={() => window.location.reload()}>Recargar aplicación</button>
+          <button type="button" className="key" onClick={() => window.location.reload()}>
+            Recargar aplicación
+          </button>
         </div>
       );
     }

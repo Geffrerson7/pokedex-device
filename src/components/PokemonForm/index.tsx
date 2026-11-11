@@ -1,3 +1,4 @@
+import { useId } from "react";
 import type { ChangeEvent, SubmitEvent } from "react";
 
 interface Props {
@@ -7,26 +8,32 @@ interface Props {
 }
 
 export default function PokemonForm({ handleSubmit, pokemon, setPokemon }: Props) {
+  const inputId = useId();
+
   return (
-    <form className="pokemon-form" onSubmit={handleSubmit}>
+    <form className="pokemon-form" role="search" onSubmit={handleSubmit}>
+      <label className="sr-only" htmlFor={inputId}>
+        Nombre o número del Pokémon
+      </label>
+
       <input
+        id={inputId}
         className="pokemon-input"
         type="text"
         name="pokemon"
         value={pokemon}
-        placeholder="Busca tu pokemon"
+        placeholder="Nombre o número"
         onChange={setPokemon}
         autoComplete="off"
+        autoCapitalize="none"
+        spellCheck={false}
+        enterKeyHint="search"
         maxLength={50}
       />
 
-      <input
-        type="submit"
-        className="pokemon-btn"
-        value=""
-        disabled={!pokemon.trim()}
-        aria-label="Buscar Pokémon"
-      />
+      <button type="submit" className="key is-primary" disabled={!pokemon.trim()}>
+        Buscar
+      </button>
     </form>
   );
 }
