@@ -1,27 +1,25 @@
-# Pokedex-React
+# Pokedex
 
-Pokedex to search for Pokemon by ID or name and store the search in a database.
+Pokedex to search for a Pokémon by name or ID and show its artwork and base stats, powered by [PokeAPI](https://pokeapi.co).
 
-## Environment Variables
+## Tech Stack
 
-To run this project, you will need to add the following environment variables to your .env file
-
-`VITE_SUPABASE_PROJECT_URL`
-
-`VITE_SUPABASE_API_KEY`
+- React 19 + TypeScript
+- Vite 8
+- pnpm
 
 ## Run Locally
 
 Clone the project
 
 ```bash
-  git clone https://github.com/Geffrerson7/Pokedex-React.git
+  git clone https://github.com/Geffrerson7/pokedex-device.git
 ```
 
 Go to the project directory
 
 ```bash
-  cd Pokedex-React
+  cd pokedex-device
 ```
 
 Install dependencies
@@ -35,6 +33,13 @@ Run project
 ```bash
   pnpm dev
 ```
+
+Build for production
+
+```bash
+  pnpm build
+```
+
 ## Demo
 
 [![Deploy with Vercel](https://vercel.com/button)](https://pokedex-react-eta.vercel.app/)
